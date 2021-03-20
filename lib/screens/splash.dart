@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:dvhacks/screens/login.dart';
 
 void main() {
   runApp(Splash());
@@ -45,6 +47,17 @@ class Body extends State<splash> {
   @override
   void initState() {
     super.initState();
+    startTime();
+  }
+
+  startTime() async {
+    var duration = new Duration(seconds: 3);
+    return new Timer(duration, route);
+  }
+
+  route() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => loginScreen()));
   }
 
   @override
