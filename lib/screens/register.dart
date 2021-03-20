@@ -1,3 +1,4 @@
+import 'package:dvhacks/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/screens/login.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -178,7 +179,10 @@ class RegisterScreen extends State<register> {
                 margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.03, right: 50),
                 child: FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => dashboard()));
+                  },
                   child: Icon(Icons.arrow_right),
                   backgroundColor: Color(0xFF424359),
                 ),
