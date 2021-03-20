@@ -1,3 +1,4 @@
+import 'package:dvhacks/screens/authChooser.dart';
 import 'package:dvhacks/screens/register.dart';
 import 'package:dvhacks/screens/splash.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class LoginScreen extends State<login> {
                 color: Colors.white,
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => splash()));
+                      MaterialPageRoute(builder: (context) => authchooser()));
                 },
               ),
             )
