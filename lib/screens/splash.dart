@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dvhacks/screens/authChooser.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/screens/login.dart';
 
@@ -57,7 +58,7 @@ class Body extends State<splash> {
 
   route() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => loginScreen()));
+        context, MaterialPageRoute(builder: (context) => authchooser()));
   }
 
   @override
