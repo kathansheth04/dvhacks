@@ -1,4 +1,5 @@
 import 'package:dvhacks/screens/dashboard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/screens/login.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -26,27 +27,28 @@ class registerScreen extends StatelessWidget {
 class register extends StatefulWidget {
   register({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
   RegisterScreen createState() => RegisterScreen();
 }
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
 TextEditingController _emailController = TextEditingController();
 TextEditingController _passwordController = TextEditingController();
-TextEditingController addressController = TextEditingController();
 
 class RegisterScreen extends State<register> {
   String pet_type = "dog";
+  Future<FirebaseUser> _handleSignUp(String email, String password) async {
+    final FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    ))
+        .user;
+    print('Signed user up: ');
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => dashboard()));
+  }
 
   List<String> pets = new List<String>();
   Widget build(BuildContext context) {
@@ -180,8 +182,8 @@ class RegisterScreen extends State<register> {
                     top: MediaQuery.of(context).size.height * 0.03, right: 50),
                 child: FloatingActionButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => dashboard()));
+                    this._handleSignUp(_emailController.text.trim(),
+                        _passwordController.text.trim());
                   },
                   child: Icon(Icons.arrow_right),
                   backgroundColor: Color(0xFF424359),

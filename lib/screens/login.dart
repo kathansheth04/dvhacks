@@ -1,5 +1,7 @@
+import 'package:dvhacks/screens/dashboard.dart';
 import 'package:dvhacks/screens/register.dart';
 import 'package:dvhacks/screens/splash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -41,10 +43,25 @@ class login extends StatefulWidget {
 }
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class LoginScreen extends State<login> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  Future<FirebaseUser> _handleSigninWithEmail(
+      String email, String password) async {
+    AuthResult authResult = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    final FirebaseUser user = authResult.user;
+
+    //assert(user != null);
+    //assert(await user.getIdToken() != null);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => dashboard()));
+    print("Signed in user:");
+    return user;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +198,11 @@ class LoginScreen extends State<login> {
                                 child: Icon(Icons.arrow_forward,
                                     color: Colors.white),
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                _handleSigninWithEmail(
+                                    _emailController.text.trim(),
+                                    _passwordController.text);
+                              },
                             ),
                           ),
                         )),
