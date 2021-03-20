@@ -3,10 +3,10 @@ import 'package:dvhacks/screens/login.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 void main() {
-  runApp(registerscreen());
+  runApp(registerScreen());
 }
 
-class registerscreen extends StatelessWidget {
+class registerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
