@@ -1,3 +1,4 @@
+import 'package:dvhacks/screens/authChooser.dart';
 import 'package:dvhacks/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/screens/login.dart';
@@ -80,7 +81,12 @@ class RegisterScreen extends State<register> {
                     child: IconButton(
                       icon: Icon(Icons.arrow_left, size: 50),
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => authchooser()));
+                      },
                     ),
                   )
                 ],
