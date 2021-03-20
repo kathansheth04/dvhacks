@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:dvhacks/screens/authChooser.dart';
+import 'package:dvhacks/screens/dashboard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/screens/login.dart';
 
@@ -55,9 +58,30 @@ class Body extends State<splash> {
     return new Timer(duration, route);
   }
 
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  bool loggedin;
+  Future<void> authchecker() async {
+    final FirebaseUser user = await auth.currentUser();
+    if (user != null) {
+      print(user.uid);
+      setState(() {
+        loggedin = true;
+      });
+    } else {
+      setState(() {
+        loggedin = false;
+      });
+    }
+  }
+
   route() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => loginScreen()));
+    if (loggedin == true) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => dashboard()));
+    } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => AuthChooser()));
+    }
   }
 
   @override

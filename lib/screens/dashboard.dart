@@ -1,3 +1,5 @@
+import 'package:dvhacks/screens/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -102,6 +104,9 @@ class dashboardScreen extends State<dashboard> {
               child: GestureDetector(
                   onTap: () async {
                     print("pressed");
+                    await FirebaseAuth.instance.signOut().then((value) =>
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => login())));
                   },
                   child: Icon(
                     Icons.portrait_rounded,
