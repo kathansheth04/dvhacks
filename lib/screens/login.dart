@@ -1,3 +1,4 @@
+import 'package:dvhacks/screens/register.dart';
 import 'package:dvhacks/screens/splash.dart';
 import 'package:flutter/material.dart';
 
@@ -192,7 +193,12 @@ class LoginScreen extends State<login> {
                 margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.05),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => registerScreen()));
+                  },
                   child: Text(
                     'Create an account!',
                     textAlign: TextAlign.center,
