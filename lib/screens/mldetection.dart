@@ -1,4 +1,5 @@
 import 'package:dvhacks/screens/logger.dart';
+import 'package:dvhacks/screens/picture_scanner.dart';
 import 'package:dvhacks/screens/splash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,12 @@ class DetectionPortalState extends State<DetectionPortal> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
                     child: new InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetectionScreen()));
+                        },
                         child: Column(children: [
                           Padding(
                             padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
