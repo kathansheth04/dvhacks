@@ -121,16 +121,6 @@ class _DetectionScreenState extends State<DetectionScreen> {
     print(variableValues);
   }
 
-  Future decode() async {
-    FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
-    BarcodeDetector barcodeDetector = FirebaseVision.instance.barcodeDetector();
-    List barCodes = await barcodeDetector.detectInImage(ourImage);
-
-    for (Barcode readableCode in barCodes) {
-      print(readableCode.displayValue);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
