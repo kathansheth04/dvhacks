@@ -69,11 +69,12 @@ class initLoggerScreen extends State<initLogger> {
         .catchError((error) => print("Failed to add info: $error"));
   }
 
-  CollectionReference firebaseFats = Firestore.instance.collection("fats");
+  CollectionReference firebaseProtein =
+      Firestore.instance.collection("protein");
   Future<void> getData() async {
     final FirebaseUser user = await auth.currentUser();
     final uid = user.uid;
-    return firebaseFats
+    return firebaseProtein
         .document(uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
@@ -86,16 +87,16 @@ class initLoggerScreen extends State<initLogger> {
     });
   }
 
-  Future<void> uploadFat(String fat) async {
+  Future<void> uploadProtein(String protein) async {
     final FirebaseUser user = await auth.currentUser();
     final uid = user.uid;
-    return firebaseFats
+    return firebaseProtein
         .document(uid.toString())
         .setData({
-          'fat1': double.parse(fat).toString(),
+          'protein1': double.parse(protein).toString(),
         })
         .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add fat info: $error"));
+        .catchError((error) => print("Failed to add protein info: $error"));
   }
 
   TextEditingController proteinController = TextEditingController();
@@ -292,7 +293,8 @@ class initLoggerScreen extends State<initLogger> {
                                       fatController.text.trim(),
                                       fiberController.text.trim())
                                   .then((value) => {
-                                        uploadFat(fatController.text.trim())
+                                        uploadProtein(
+                                                proteinController.text.trim())
                                             .then((value) => {
                                                   Navigator.push(
                                                       context,

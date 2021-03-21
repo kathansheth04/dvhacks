@@ -1,9 +1,9 @@
+import 'package:dvhacks/screens/logger.dart';
+import 'package:dvhacks/screens/splash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/camera/main/CameraScreen.dart';
 import 'package:dvhacks/screens/dashboard.dart';
-import 'package:dvhacks/screens/logger.dart';
-import 'package:dvhacks/screens/splash.dart';
 
 class DetectionPortal extends StatefulWidget {
   @override
