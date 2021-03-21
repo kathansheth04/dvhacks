@@ -13,12 +13,12 @@ class ConfirmationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future readText() async {
+    Future analyzeText() async {
       FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(File(file));
       TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
-      VisionText readText = await recognizeText.processImage(ourImage);
+      VisionText analyzeText = await recognizeText.processImage(ourImage);
 
-      for (TextBlock block in readText.blocks) {
+      for (TextBlock block in analyzeText.blocks) {
         for (TextLine line in block.lines) {
           print(line.text);
         }
@@ -76,7 +76,7 @@ class ConfirmationScreen extends StatelessWidget {
                           padding: EdgeInsets.only(bottom: 20),
                           width: MediaQuery.of(context).size.width * 0.42,
                           child: RaisedButton(
-                              onPressed: readText,
+                              onPressed: analyzeText,
                               shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(30.0))),
