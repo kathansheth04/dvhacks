@@ -1,6 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dvhacks/algorithm.dart';
+import 'package:dvhacks/screens/approved.dart';
+import 'package:dvhacks/screens/rejected.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dvhacks/screens/splash.dart';
@@ -26,13 +31,104 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
   bool imageUploaded = false;
 
-  Future uploadImage() async {
+  Future pickImage() async {
     var tempStore = await ImagePicker().getImage(source: ImageSource.gallery);
 
     setState(() {
       pickedImage = File(tempStore.path);
       imageUploaded = true;
     });
+  }
+
+  CollectionReference firebase = Firestore.instance.collection("users");
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  List<double> existing = new List<double>();
+  List<double> vals = new List<double>();
+
+  var approvalResult = "";
+  Future<void> evaluateFood() async {
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
+    TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
+    VisionText readText = await recognizeText.processImage(ourImage);
+    List<String> variables = new List<String>();
+    List<double> variableValues = new List<double>();
+    for (TextBlock block in readText.blocks) {
+      for (TextLine line in block.lines) {
+        if (line.text.toLowerCase().contains("crude") ||
+            line.text.toLowerCase().contains("moisture") ||
+            line.text.toLowerCase().contains("fat") ||
+            line.text.toLowerCase().contains("fiber") ||
+            line.text.toLowerCase().contains("protein")) {
+          variables.add(line.text);
+        } else if (line.text.toLowerCase().contains("%")) {
+          final intValue = int.parse(
+              line.text.toLowerCase().replaceAll(RegExp('[^0-9]'), ''));
+          double floatValues = intValue / 100.0;
+          variableValues.add(floatValues);
+        }
+      }
+    }
+    print("Variables: ");
+    print(variables);
+    print("");
+    print("values");
+    print(variableValues);
+    /*
+     * Order of arrays: [protein, fat, fiber, moisture] 
+     */
+    return firebase
+        .document(uid.toString())
+        .get()
+        .then((DocumentSnapshot snapshot) async {
+      existing.add(double.parse(snapshot.data["protein"].toString()));
+      existing.add(double.parse(snapshot.data["fat"].toString()));
+      existing.add(double.parse(snapshot.data["fiber"].toString()));
+      print("existing: " + existing.toString());
+      vals = variableValues;
+      approvalResult = purchaseDecision(vals, existing, "dog");
+      print(approvalResult);
+    });
+  }
+
+  Future<void> readText() async {
+    FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
+    TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
+    VisionText readText = await recognizeText.processImage(ourImage);
+    List<String> variables = new List<String>();
+    List<double> variableValues = new List<double>();
+    for (TextBlock block in readText.blocks) {
+      for (TextLine line in block.lines) {
+        if (line.text.toLowerCase().contains("crude") ||
+            line.text.toLowerCase().contains("moisture") ||
+            line.text.toLowerCase().contains("fat") ||
+            line.text.toLowerCase().contains("fiber") ||
+            line.text.toLowerCase().contains("protein")) {
+          variables.add(line.text);
+        } else if (line.text.toLowerCase().contains("%")) {
+          final intValue = int.parse(
+              line.text.toLowerCase().replaceAll(RegExp('[^0-9]'), ''));
+          double floatValues = intValue / 10.0;
+          variableValues.add(floatValues);
+        }
+      }
+    }
+    print("Variables: ");
+    print(variables);
+    print("");
+    print("values");
+    print(variableValues);
+  }
+
+  Future decode() async {
+    FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(pickedImage);
+    BarcodeDetector barcodeDetector = FirebaseVision.instance.barcodeDetector();
+    List barCodes = await barcodeDetector.detectInImage(ourImage);
+
+    for (Barcode readableCode in barCodes) {
+      print(readableCode.displayValue);
+    }
   }
 
   @override
@@ -137,7 +233,24 @@ class _DetectionScreenState extends State<DetectionScreen> {
             width: MediaQuery.of(context).size.width * 0.7,
             child: RaisedButton.icon(
                 icon: Icon(Icons.check_box),
-                onPressed: () {},
+                onPressed: () {
+                  evaluateFood().then((value) => {
+                        if (approvalResult.toLowerCase() == "approve")
+                          {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => approved()))
+                          }
+                        else
+                          {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => rejected()))
+                          }
+                      });
+                },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(30.0))),
                 label: Text('Evaluate',
@@ -155,7 +268,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
             width: MediaQuery.of(context).size.width * 0.7,
             child: RaisedButton.icon(
                 icon: Icon(Icons.cloud_download),
-                onPressed: uploadImage,
+                onPressed: pickImage,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(30.0))),
                 label: Text('Upload',

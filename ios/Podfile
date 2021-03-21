@@ -1,6 +1,10 @@
 # Uncomment this line to define a global platform for your project
 platform :ios, '10.0'
-
+$FirebaseSDKVersion = '6.33.0'
+pod 'Firebase/MLVisionBarcodeModel'
+pod 'Firebase/MLVisionFaceModel'
+pod 'Firebase/MLVisionLabelModel'
+pod 'Firebase/MLVisionTextModel'
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
