@@ -1,7 +1,9 @@
+import 'package:dvhacks/screens/logger.dart';
 import 'package:dvhacks/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(Dashboard());
@@ -32,8 +34,6 @@ class MyCustomRoute<T> extends MaterialPageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    // Fades between routes. (If you don't want any animation,
-    // just return child.)
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(0.0, 0.0),
@@ -45,9 +45,15 @@ class MyCustomRoute<T> extends MaterialPageRoute<T> {
 }
 
 class dashboardScreen extends State<dashboard> {
+  List<FlSpot> line_chart = List<FlSpot>();
+  String fat = '';
+  String protein = '';
+  String fiber = '';
   @override
   void initState() {
     super.initState();
+    getData();
+    getPieChartData();
   }
 
   int _selectedIndex = 1;
@@ -71,12 +77,51 @@ class dashboardScreen extends State<dashboard> {
             context, MyCustomRoute(builder: (context) => dashboard()));
       } else {
         _selectedIndex = 1;
-        print("logger form needs to be implemented later");
+        Navigator.push(context, MyCustomRoute(builder: (context) => logger()));
       }
     });
   }
 
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
+  CollectionReference firebase = Firestore.instance.collection("fats");
+  CollectionReference firebaseUser = Firestore.instance.collection("users");
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  Future<void> getData() async {
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    return firebase
+        .document(uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      Map<String, dynamic> temp_list = documentSnapshot.data;
+      print("goes through here");
+      setState(() {
+        for (int i = 0; i < documentSnapshot.data.length; i++) {
+          line_chart.add(FlSpot(
+              double.parse((2 * i).toString()),
+              (double.parse(
+                      documentSnapshot.data["fat" + (i + 1).toString()])) /
+                  10));
+        }
+      });
+      print(temp_list);
+    });
+  }
+
+  Future<void> getPieChartData() async {
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    return firebaseUser
+        .document(uid.toString())
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      setState(() {
+        protein = documentSnapshot.data["protein"];
+        fiber = documentSnapshot.data["fiber"];
+        fat = documentSnapshot.data["fat"];
+      });
+    });
+  }
 
   List<Color> gradientColors = [
     const Color(0xFF424359),
@@ -141,131 +186,144 @@ class dashboardScreen extends State<dashboard> {
             ),
           ),
         ),
-        new Container(
-          decoration: BoxDecoration(),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                    height: sizeheight(context) * 0.25,
-                    width: sizewidth(context) * 0.9,
-                    alignment: Alignment.topCenter,
-                    margin: EdgeInsets.only(
-                        top: sizeheight(context) * 0.02,
-                        left: sizewidth(context) * 0.04,
-                        right: sizewidth(context) * 0.04),
-                    child: InkWell(
-                        onTap: () {
-                          print("pressed");
-                        },
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: Image(
-                              image: AssetImage('lib/assets/dashboard.png'),
-                            )))),
-                Container(
-                  margin: EdgeInsets.only(top: sizeheight(context) * 0.02),
-                  alignment: Alignment.center,
-                  child: Text("Proportions",
-                      style: TextStyle(fontSize: 21, color: Colors.white)),
-                ),
-                Container(
-                  child: Container(
+        if (line_chart.length == 0 ||
+            protein == '' ||
+            fat == '' ||
+            fiber == '') ...{
+          new Container(
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(const Color(0xff66D5C1)),
+            ),
+          )
+        } else ...{
+          new Container(
+            decoration: BoxDecoration(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                      height: sizeheight(context) * 0.25,
+                      width: sizewidth(context) * 0.9,
+                      alignment: Alignment.topCenter,
                       margin: EdgeInsets.only(
-                          left: sizewidth(context) * 0.05,
-                          right: sizewidth(context) * 0.05,
-                          top: sizeheight(context) * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        color: const Color(0xff66D5C1),
-                      ),
-                      height: sizeheight(context) * 0.2,
-                      width: sizewidth(context) * 0.6,
-                      child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              sizewidth(context) * 0.03,
-                              sizeheight(context) * 0.01,
-                              0,
-                              0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      bottom: sizeheight(context) * 0.01,
-                                      left: sizewidth(context) * 0.07),
-                                  child: PieChart(
-                                    PieChartData(
-                                        pieTouchData: PieTouchData(
-                                            touchCallback: (pieTouchResponse) {
-                                          setState(() {
-                                            if (pieTouchResponse.touchInput
-                                                    is FlLongPressEnd ||
-                                                pieTouchResponse.touchInput
-                                                    is FlPanEnd) {
-                                              touchedIndex1 = -1;
-                                            } else {
-                                              touchedIndex1 = pieTouchResponse
-                                                  .touchedSectionIndex;
-                                            }
-                                          });
-                                        }),
-                                        borderData: FlBorderData(
-                                          show: false,
-                                        ),
-                                        sectionsSpace: 0,
-                                        centerSpaceRadius: 20,
-                                        sections: showingSections1()),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      left: sizewidth(context) * 0.26),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const <Widget>[],
-                                  ),
-                                )
-                              ]))),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  margin: EdgeInsets.only(top: sizeheight(context) * 0.02),
-                  child: Text(
-                    "Fat Consumed",
-                    style: TextStyle(fontSize: 21, color: Colors.white),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
+                          top: sizeheight(context) * 0.02,
+                          left: sizewidth(context) * 0.04,
+                          right: sizewidth(context) * 0.04),
+                      child: InkWell(
+                          onTap: () {
+                            print("pressed");
+                          },
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image(
+                                image: AssetImage('lib/assets/dashboard.png'),
+                              )))),
+                  Container(
                     margin: EdgeInsets.only(top: sizeheight(context) * 0.02),
-                    height: sizeheight(context) * 0.23,
-                    width: sizewidth(context) * 0.9,
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(18),
-                      ),
-                      color: const Color(0xFf66D5C1),
+                    child: Text("Proportions",
+                        style: TextStyle(fontSize: 21, color: Colors.white)),
+                  ),
+                  Container(
+                    child: Container(
+                        margin: EdgeInsets.only(
+                            left: sizewidth(context) * 0.05,
+                            right: sizewidth(context) * 0.05,
+                            top: sizeheight(context) * 0.02),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          color: const Color(0xff66D5C1),
+                        ),
+                        height: sizeheight(context) * 0.2,
+                        width: sizewidth(context) * 0.6,
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                sizewidth(context) * 0.03,
+                                sizeheight(context) * 0.01,
+                                0,
+                                0),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        bottom: sizeheight(context) * 0.01,
+                                        left: sizewidth(context) * 0.07),
+                                    child: PieChart(
+                                      PieChartData(
+                                          pieTouchData: PieTouchData(
+                                              touchCallback:
+                                                  (pieTouchResponse) {
+                                            setState(() {
+                                              if (pieTouchResponse.touchInput
+                                                      is FlLongPressEnd ||
+                                                  pieTouchResponse.touchInput
+                                                      is FlPanEnd) {
+                                                touchedIndex1 = -1;
+                                              } else {
+                                                touchedIndex1 = pieTouchResponse
+                                                    .touchedSectionIndex;
+                                              }
+                                            });
+                                          }),
+                                          borderData: FlBorderData(
+                                            show: false,
+                                          ),
+                                          sectionsSpace: 0,
+                                          centerSpaceRadius: 20,
+                                          sections: showingSections1()),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: sizewidth(context) * 0.26),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: const <Widget>[],
+                                    ),
+                                  )
+                                ]))),
+                  ),
+                  Container(
+                    alignment: Alignment.topCenter,
+                    margin: EdgeInsets.only(top: sizeheight(context) * 0.02),
+                    child: Text(
+                      "Fat Consumed",
+                      style: TextStyle(fontSize: 21, color: Colors.white),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          right: 1.0, left: 1.0, top: 24, bottom: 12),
-                      child: LineChart(
-                        linechart(),
+                  ),
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: sizeheight(context) * 0.02),
+                      height: sizeheight(context) * 0.23,
+                      width: sizewidth(context) * 0.9,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(18),
+                        ),
+                        color: const Color(0xFf66D5C1),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: 1.0, left: 1.0, top: 24, bottom: 12),
+                        child: LineChart(
+                          linechart(),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        }
       ]),
     );
   }
@@ -278,7 +336,7 @@ class dashboardScreen extends State<dashboard> {
         case 0:
           return PieChartSectionData(
             color: const Color(0xff03989E),
-            value: 25.0,
+            value: double.parse(protein),
             title: '',
             radius: radius,
             titleStyle: TextStyle(fontSize: 16, color: const Color(0xffffffff)),
@@ -286,7 +344,7 @@ class dashboardScreen extends State<dashboard> {
         case 1:
           return PieChartSectionData(
             color: const Color(0xff5CE1E6),
-            value: 25.0,
+            value: double.parse(fat),
             title: '',
             radius: radius,
             titleStyle: TextStyle(fontSize: 16, color: const Color(0xffffffff)),
@@ -294,7 +352,7 @@ class dashboardScreen extends State<dashboard> {
         case 2:
           return PieChartSectionData(
             color: const Color(0xff4BC6B0),
-            value: 25.0,
+            value: double.parse(fiber),
             title: '',
             radius: radius,
             titleStyle: TextStyle(fontSize: 16, color: const Color(0xffffffff)),
@@ -302,7 +360,10 @@ class dashboardScreen extends State<dashboard> {
         case 3:
           return PieChartSectionData(
             color: const Color(0xff666882),
-            value: 25.0,
+            value: 100 -
+                (double.parse(fat) +
+                    double.parse(fiber) +
+                    double.parse(protein)),
             title: '',
             radius: radius,
             titleStyle: TextStyle(fontSize: 16, color: const Color(0xffffffff)),
@@ -392,12 +453,7 @@ class dashboardScreen extends State<dashboard> {
       maxY: 6,
       lineBarsData: [
         LineChartBarData(
-          spots: [
-            FlSpot(1, 1),
-            FlSpot(3, 1.5),
-            FlSpot(5, 1.4),
-            FlSpot(7, 3.4),
-          ],
+          spots: line_chart,
           isCurved: true,
           colors: gradientColors,
           barWidth: 5,

@@ -51,6 +51,7 @@ class Body extends State<splash> {
   void initState() {
     super.initState();
     startTime();
+    authchecker();
   }
 
   startTime() async {

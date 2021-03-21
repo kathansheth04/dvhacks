@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dvhacks/screens/authChooser.dart';
 import 'package:dvhacks/screens/dashboard.dart';
+import 'package:dvhacks/screens/init_logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dvhacks/screens/login.dart';
@@ -48,7 +50,21 @@ class RegisterScreen extends State<register> {
         .user;
     print('Signed user up: ');
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => dashboard()));
+        context, MaterialPageRoute(builder: (context) => initLogger()));
+  }
+
+  CollectionReference firebaseUser = Firestore.instance.collection("pets");
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  Future<void> upload(String pet) async {
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    return firebaseUser
+        .document(uid.toString())
+        .setData({
+          'pet': pet,
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
   }
 
   List<String> pets = new List<String>();
@@ -188,8 +204,10 @@ class RegisterScreen extends State<register> {
                     top: MediaQuery.of(context).size.height * 0.03, right: 50),
                 child: FloatingActionButton(
                   onPressed: () {
-                    this._handleSignUp(_emailController.text.trim(),
-                        _passwordController.text.trim());
+                    this
+                        ._handleSignUp(_emailController.text.trim(),
+                            _passwordController.text.trim())
+                        .then((value) => {upload(pet_type)});
                   },
                   child: Icon(Icons.arrow_right),
                   backgroundColor: Color(0xFF424359),
