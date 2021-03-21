@@ -6,7 +6,7 @@ Many pets are not given a proper diet because it is hard to measure the right am
 
 ## Tools Used
 
-* (Flutter with dart)[https://flutter.dev/]
+* [Flutter with dart](https://flutter.dev/)
 * (Flutter Camera)[https://pub.dev/packages/camera]
 * (Fl Chart)[https://pub.dev/packages/fl_chart]
 * (Firebase Auth and Firestore)[https://firebase.google.com/]
