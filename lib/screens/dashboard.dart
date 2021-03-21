@@ -1,5 +1,7 @@
+import 'package:dvhacks/screens/indicator.dart';
 import 'package:dvhacks/screens/logger.dart';
 import 'package:dvhacks/screens/login.dart';
+import 'package:dvhacks/screens/mldetection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -83,7 +85,7 @@ class dashboardScreen extends State<dashboard> {
   }
 
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  CollectionReference firebase = Firestore.instance.collection("fats");
+  CollectionReference firebase = Firestore.instance.collection("protein");
   CollectionReference firebaseUser = Firestore.instance.collection("users");
   final FirebaseAuth auth = FirebaseAuth.instance;
   Future<void> getData() async {
@@ -100,7 +102,7 @@ class dashboardScreen extends State<dashboard> {
           line_chart.add(FlSpot(
               double.parse((2 * i).toString()),
               (double.parse(
-                      documentSnapshot.data["fat" + (i + 1).toString()])) /
+                      documentSnapshot.data["protein" + (i + 1).toString()])) /
                   10));
         }
       });
@@ -213,7 +215,10 @@ class dashboardScreen extends State<dashboard> {
                           right: sizewidth(context) * 0.04),
                       child: InkWell(
                           onTap: () {
-                            print("pressed");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetectionPortal()));
                           },
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(18),
@@ -284,7 +289,40 @@ class dashboardScreen extends State<dashboard> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: const <Widget>[],
+                                      children: const <Widget>[
+                                        Indicator(
+                                          color: Color(0xff03989E),
+                                          text: 'Protein',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Indicator(
+                                          color: Color(0xff5CE1E6),
+                                          text: 'Fat',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Indicator(
+                                          color: Color(0xff4BC6B0),
+                                          text: 'Fiber',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Indicator(
+                                          color: Color(0xff666882),
+                                          text: 'Other',
+                                          isSquare: true,
+                                        ),
+                                        SizedBox(
+                                          height: 18,
+                                        ),
+                                      ],
                                     ),
                                   )
                                 ]))),
@@ -293,7 +331,7 @@ class dashboardScreen extends State<dashboard> {
                     alignment: Alignment.topCenter,
                     margin: EdgeInsets.only(top: sizeheight(context) * 0.02),
                     child: Text(
-                      "Fat Consumed",
+                      "Protein Consumed",
                       style: TextStyle(fontSize: 21, color: Colors.white),
                     ),
                   ),
