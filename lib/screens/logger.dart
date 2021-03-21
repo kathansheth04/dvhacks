@@ -330,7 +330,7 @@ class loggerScreen extends State<logger> {
                       new Container(
                         width: sizewidth(context) * 0.7,
                         margin: EdgeInsets.only(top: 40),
-                        child: RaisedButton.icon(
+                        child: RaisedButton(
                             onPressed: () {
                               this
                                   .upload(
@@ -345,14 +345,12 @@ class loggerScreen extends State<logger> {
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(30.0))),
-                            label: Text('Update',
+                            child: Text('Update',
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 17)),
-                            icon: Icon(Icons.supervised_user_circle,
-                                color: Colors.black),
                             padding: const EdgeInsets.all(13.0),
                             splashColor: Colors.lightBlue[200],
-                            color: const Color(0xFFABF6D4)),
+                            color: const Color(0xFF66D5C1)),
                       ),
                     ],
                   ),
