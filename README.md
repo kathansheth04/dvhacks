@@ -7,11 +7,11 @@ Many pets are not given a proper diet because it is hard to measure the right am
 ## Tools Used
 
 * [Flutter with dart](https://flutter.dev/)
-* (Flutter Camera)[https://pub.dev/packages/camera]
-* (Fl Chart)[https://pub.dev/packages/fl_chart]
-* (Firebase Auth and Firestore)[https://firebase.google.com/]
-* (Firebase MLVision)[https://firebase.google.com/docs/ml-kit]
-* (Canva for Designs and Presentation)[https://www.canva.com]
+* [Flutter Camera](https://pub.dev/packages/camera)
+* [Fl Chart](https://pub.dev/packages/fl_chart)
+* [Firebase Auth and Firestore](https://firebase.google.com/)
+* [Firebase MLVision](https://firebase.google.com/docs/ml-kit)
+* [Canva for Designs and Presentation](https://www.canva.com)
 
 ## Highlights and Features
 
@@ -24,6 +24,6 @@ Many pets are not given a proper diet because it is hard to measure the right am
 
 ## Contributors
 
-* (Kathan Sheth)[https://www.kathansheth.live]
-* (Sashv Dave)[http://sashvdave.github.io]
+* [Kathan Sheth](https://www.kathansheth.live)
+* [Sashv Dave](http://sashvdave.github.io)
 
