@@ -200,7 +200,7 @@ class loggerScreen extends State<logger> {
                     children: [
                       new Container(
                         margin: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.37,
+                            top: MediaQuery.of(context).size.height * 0.21,
                             bottom: 0,
                             left: 55,
                             right: 55),

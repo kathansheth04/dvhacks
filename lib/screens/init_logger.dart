@@ -155,7 +155,7 @@ class initLoggerScreen extends State<initLogger> {
                     children: [
                       new Container(
                         margin: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.37,
+                            top: MediaQuery.of(context).size.height * 0.27,
                             bottom: 0,
                             left: 55,
                             right: 55),

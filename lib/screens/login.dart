@@ -68,6 +68,7 @@ class LoginScreen extends State<login> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(children: [
         Container(
           decoration: BoxDecoration(
@@ -96,11 +97,8 @@ class LoginScreen extends State<login> {
         ),
         Form(
           child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               new Container(
-                // Pad it such that the keyboard won't block the inputs
-                padding: MediaQuery.of(context).viewInsets,
                 margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.43,
                     bottom: 0,
