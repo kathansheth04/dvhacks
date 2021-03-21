@@ -1,5 +1,6 @@
 import 'package:dvhacks/screens/logger.dart';
 import 'package:dvhacks/screens/login.dart';
+import 'package:dvhacks/screens/mldetection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -213,7 +214,10 @@ class dashboardScreen extends State<dashboard> {
                           right: sizewidth(context) * 0.04),
                       child: InkWell(
                           onTap: () {
-                            print("pressed");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetectionPortal()));
                           },
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(18),

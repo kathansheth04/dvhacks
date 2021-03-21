@@ -20,6 +20,15 @@ dependencies:
   firebase_auth: ^0.14.0+5
   cloud_firestore: ^0.12.9+5
   google_sign_in: 
+  image_picker:
+  intl: ^0.16.1
+  firebase_ml_vision: ^0.10.0
+  http: ^0.12.2
+  camera: ^0.5.2+1
+  path_provider: ^1.1.0
+  path: ^1.6.4
+  esys_flutter_share: ^1.0.2
+  flutter_svg: ^0.19.3
 
 dev_dependencies:
   flutter_test:
